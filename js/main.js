@@ -21,7 +21,8 @@ var ball = {
         let myCustomBall = Object.create(this);
         myCustomBall.element = document.createElement('div');
         myCustomBall.element.id +='ball';
-        myCustomBall.element.style.backgroundColor =  this.colors[Math.floor(Math.random()*this.colors.length)];
+        myCustomBall.element.style.backgroundColor =  '#d578ff';
+        myCustomBall.radius = radius;
         myCustomBall.width = radius*2;
         myCustomBall.height = radius*2;
         myCustomBall.x = Math.floor(Math.random() * (canvas.width - radius * 2) + 1);
@@ -35,8 +36,6 @@ var ball = {
         canvas.element.appendChild(myCustomBall.element);
         return myCustomBall;
     },
-
-    colors: ['#d578ff', '#625df0', '#59e7f2', '#f259a6', '#67eebb', '#213240', '#90aec6', '#10c8cd', '#ec1559', '#faf93c'],
 
     directions: [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6],
     
@@ -91,21 +90,18 @@ var ball = {
     }
 }
 
-// Start
+// Create
 canvas.draw();
 let newBall = ball.draw();
 newBall.startMoving();
-// Event
-document.body.onresize =  function() {
-    setTimeout(updateCanvas, 1000/60);
-}
 // Controller
 let btnSpeedUp = document.getElementById('speedUp');
 let btnSlowDown = document.getElementById('slowDown');
-
+// Event
 btnSpeedUp.addEventListener('click', function () {
     setTimeout(newBall.speedUp(), 1000/50);
 })
+
 btnSlowDown.addEventListener('click', function () {
     setTimeout(newBall.slowDown(), 1000/50);
 })
@@ -120,6 +116,23 @@ document.addEventListener('keydown', function(e) {
     }
 })
 
-function updateCanvas() {
-    canvas.update();
+// Reload page when stop resizing
+var rtime;
+var timeout = false;
+var delta = 200;
+window.onresize = function() {
+    rtime = new Date();
+    if (timeout === false) {
+        timeout = true;
+        setTimeout(resizeend, delta);
+    }
+};
+
+function resizeend() {
+    if (new Date() - rtime < delta) {
+        setTimeout(resizeend, delta);
+    } else {
+        timeout = false;
+        window.location.reload()
+    }               
 }
