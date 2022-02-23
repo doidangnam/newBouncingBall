@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+#canvas {
+    position: relative;
+}
+#ball {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.hidden {
+    visibility: hidden;
+}
