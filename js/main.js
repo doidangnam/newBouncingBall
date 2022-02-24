@@ -18,36 +18,43 @@ let canvas = {
 
 var ball = {
     draw: function (radius = 25) {
+        // Create new object of ball
         let myCustomBall = Object.create(this);
+        // Create the container of the ball
         myCustomBall.element = document.createElement('div');
-        myCustomBall.element.id +='ball';
-        myCustomBall.element.style.backgroundColor =  '#d578ff';
+        // Ball's properties
+        myCustomBall.color =  '#d578ff'; //Ball color
         myCustomBall.radius = radius;
         myCustomBall.width = radius*2;
         myCustomBall.height = radius*2;
+        // x, y - starting position
         myCustomBall.x = Math.floor(Math.random() * (canvas.width - radius * 2) + 1);
         myCustomBall.y = Math.floor(Math.random() * (canvas.height - radius * 2) + 1);
+        // Starting direction and speed, the higher dx, dy value, the faster the ball move
         myCustomBall.dx = this.toDirection();
         myCustomBall.dy = this.toDirection();
+        // DOM element setup
+        myCustomBall.element.id +='ball';
         myCustomBall.element.style.width = myCustomBall.width + 'px';
         myCustomBall.element.style.height = myCustomBall.height + 'px';
         myCustomBall.element.style.backgroundColor = myCustomBall.color;
         // Add ball to canvas
         canvas.element.appendChild(myCustomBall.element);
+        
         return myCustomBall;
     },
 
     directions: [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6],
-    
+    // Random start-direction
     toDirection: function () {
         return this.directions[Math.floor(Math.random()*this.directions.length)];
     },
-
+    // Position of the ball
     moveTo: function (x,y) {
         this.element.style.left = x + 'px';
         this.element.style.top = y + 'px';
     },
-
+    // When the ball hit wall, reverse its dx, dy
     hitWall: function (x, y) {
         if (x < 0 || x > canvas.width - this.width) {
             this.dx = -this.dx;
@@ -57,8 +64,8 @@ var ball = {
             this.dy = -this.dy;
         }
     },
-
-    startMoving: function (x = this.x, y = this.y) {
+    // Ball starts to move at position(x,y)
+    startMoving: function (x = Math.round(this.x), y = Math.round(this.y)) {
         this.moveTo(x, y);
         let ball = this;
         setTimeout(function () {
@@ -90,14 +97,14 @@ var ball = {
     }
 }
 
-// Create
 canvas.draw();
 let newBall = ball.draw();
 newBall.startMoving();
+
 // Controller
 let btnSpeedUp = document.getElementById('speedUp');
 let btnSlowDown = document.getElementById('slowDown');
-// Event
+
 btnSpeedUp.addEventListener('click', function () {
     setTimeout(newBall.speedUp(), 1000/50);
 })
@@ -116,23 +123,12 @@ document.addEventListener('keydown', function(e) {
     }
 })
 
-// Reload page when stop resizing
-var rtime;
-var timeout = false;
-var delta = 200;
 window.onresize = function() {
-    rtime = new Date();
-    if (timeout === false) {
-        timeout = true;
-        setTimeout(resizeend, delta);
+    canvas.update();
+    if (parseFloat(newBall.element.style.top) + 50  >= canvas.height || parseFloat(newBall.element.style.left) + 50 >= canvas.width) {
+        if (confirm('You ball is stuck, try to expand and PRESS "Cancel", or "OK" to reset the page')) {
+            window.location.reload();
+        }
     }
+    
 };
-
-function resizeend() {
-    if (new Date() - rtime < delta) {
-        setTimeout(resizeend, delta);
-    } else {
-        timeout = false;
-        window.location.reload()
-    }               
-}
