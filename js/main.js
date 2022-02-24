@@ -1,4 +1,10 @@
-// Objects
+const timeout = 1000 / 60;
+const arrowLeftKey =  '37';
+const arrowUpKey =  '38';
+const arrowRightKey =  '39';
+const arrowDownKey =  '40';
+
+// Objects section
 let canvas = {
     element: document.getElementById('canvas'),
     height: window.innerHeight,
@@ -71,7 +77,7 @@ var ball = {
         setTimeout(function () {
             ball.hitWall(x ,y);
             ball.startMoving(x + ball.dx, y + ball.dy); 
-        }, 1000/60);
+        }, timeout);
     },
 
     speedUp: function() {
@@ -96,7 +102,9 @@ var ball = {
         }
     }
 }
+// End Objects Section
 
+// Main
 canvas.draw();
 let newBall = ball.draw();
 newBall.startMoving();
@@ -106,26 +114,27 @@ let btnSpeedUp = document.getElementById('speedUp');
 let btnSlowDown = document.getElementById('slowDown');
 
 btnSpeedUp.addEventListener('click', function () {
-    setTimeout(newBall.speedUp(), 1000/50);
+    setTimeout(newBall.speedUp(), timeout);
 })
 
 btnSlowDown.addEventListener('click', function () {
-    setTimeout(newBall.slowDown(), 1000/50);
+    setTimeout(newBall.slowDown(), timeout);
 })
 
 document.addEventListener('keydown', function(e) {
-    if (e.keyCode == '38' || e.keyCode == '39') {
+    if (e.keyCode == arrowRightKey || e.keyCode == arrowUpKey) {
         btnSpeedUp.click();
     }
-    
-    if (e.keyCode == '37' || e.keyCode == '40') {
+    // Left Arrow - key code 38, Right Arrow key code 39
+    if (e.keyCode == arrowLeftKey || e.keyCode == arrowDownKey) {
         btnSlowDown.click();
     }
 })
 
 window.onresize = function() {
     canvas.update();
-    if (parseFloat(newBall.element.style.top) + 50  >= canvas.height || parseFloat(newBall.element.style.left) + 50 >= canvas.width) {
+    // Check the position of the ball
+    if (parseFloat(newBall.element.style.top) + newBall.radius * 2  >= canvas.height || parseFloat(newBall.element.style.left) + newBall.radius * 2 >= canvas.width) {
         if (confirm('You ball is stuck, try to expand and PRESS "Cancel", or "OK" to reset the page')) {
             window.location.reload();
         }
